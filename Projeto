@@ -1,1 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento de Mesas - Restaurante</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://img.freepik.com/vetores-premium/ilustracao-de-refeicao-de-fast-food-batata-frita-cachorro-quente-cheeseburguer_212889-4908.jpg'),
+                        url('https://img.freepik.com/fotos-premium/pasteis-fritos-pastel-brasileiro-de-feira-em-uma-cesta-de-fundo-branco_598644-704.jpg?w=2000');
+            background-size: cover, cover;
+            background-repeat: no-repeat, no-repeat;
+            background-position: center, center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #e67e22;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+        }
+        .confirmation {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #27ae60;
+            border-radius: 5px;
+            text-align: center;
+        }
+        @media (max-width: 500px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Agendamento de Mesas</h2>
+        <form id="bookingForm">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
 
+            <label for="phone">Telefone:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="date">Data:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Horário:</label>
+            <input type="time" id="time" name="time" required>
+
+            <label for="people">Número de Pessoas:</label>
+            <select id="people" name="people" required>
+                <option value="">Selecione</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3-4">3-4</option>
+                <option value="5+">5 ou mais</option>
+            </select>
+
+            <button type="submit">Agendar</button>
+        </form>
+        <div class="confirmation" id="confirmationMessage">
+            Reserva realizada com sucesso! Entraremos em contato para confirmar os detalhes.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('confirmationMessage').style.display = 'block';
+            this.reset();
+        });
+    </script>
+</body>
+</html>
