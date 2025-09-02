@@ -7,12 +7,8 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: url('https://img.freepik.com/vetores-premium/ilustracao-de-refeicao-de-fast-food-batata-frita-cachorro-quente-cheeseburguer_212889-4908.jpg'),
-                        url('https://img.freepik.com/fotos-premium/pasteis-fritos-pastel-brasileiro-de-feira-em-uma-cesta-de-fundo-branco_598644-704.jpg?w=2000');
-            background-size: cover, cover;
-            background-repeat: no-repeat, no-repeat;
-            background-position: center, center;
-            background-attachment: fixed;
+            background: url('https://img.freepik.com/vetores-premium/ilustracao-de-refeicao-de-fast-food-batata-frita-cachorro-quente-cheeseburguer_212889-4908.jpg') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             padding: 0;
             color: #fff;
