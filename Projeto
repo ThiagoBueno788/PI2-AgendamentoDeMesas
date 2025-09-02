@@ -82,7 +82,7 @@
 <button type="submit">Agendar</button>
 </form>
 <div class="confirmation" id="confirmationMessage">
-            Reserva realizada com sucesso! Entraremos em contato para confirmar os detalhes.
+            Reserva realizada com sucesso! Reserva válida até 30 após data e hora agendada!.
         </div>
     </div>
 
