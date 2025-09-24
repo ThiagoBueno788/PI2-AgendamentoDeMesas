@@ -183,7 +183,7 @@
             <label for="people">Número de Pessoas:</label>
             <select id="people" name="people" required aria-required="true" aria-label="Número de Pessoas">
                 <option value="">Selecione</option>
-                <!-- opções de 1 a 50 -->
+                <!-- opções de 1 a 50 como nao consegui automatizar fiz copy cola da mesa 1 ate a 50 -->
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -239,7 +239,7 @@
             <label for="table">Número da Mesa:</label>
             <select id="table" name="table" required aria-required="true" aria-label="Número da Mesa">
                 <option value="">Selecione</option>
-                <!-- opções de 1 a 25 -->
+                <!-- opções de 1 a 25 copia do codigo 1 a 25 -->
                 <option value="1">Mesa 1</option>
                 <option value="2">Mesa 2</option>
                 <option value="3">Mesa 3</option>
@@ -375,7 +375,7 @@
             return true;
         }
 
-        // ========== para enviar o formulario via wats ==========
+        // ========== para enviar o formulario via wats, esta meu numero para teste, podem alterar ==========
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (!validarDataHora()) return;
@@ -425,4 +425,5 @@
         document.getElementById('time').disabled = false;
     </script>
 </body>
+
 </html>
