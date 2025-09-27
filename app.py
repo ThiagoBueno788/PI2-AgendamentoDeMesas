@@ -4,23 +4,21 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# URL do banco (vai vir das variáveis de ambiente no Render)
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Conectar ao Neon (com sslmode)
-def get_connection():
-    return psycopg2.connect(DATABASE_URL, sslmode="require")
+def get_db_connection():
+    return psycopg2.connect(DATABASE_URL)
 
 @app.route("/")
-def home():
-    # Exemplo de query simples
+def index():
     try:
-        conn = get_connection()
+        conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT NOW();")  # só para testar
-        result = cur.fetchone()
+        cur.execute("SELECT NOW();")
+        data = cur.fetchone()
         cur.close()
         conn.close()
-        return render_template("index.html", data=result[0])
+        return render_template("index.html", data=data[0])
     except Exception as e:
-        return f"Erro ao conectar ao banco: {e}"
+        return f"<h1>Erro ao conectar ao banco:</h1><p>{e}</p>"
+    
