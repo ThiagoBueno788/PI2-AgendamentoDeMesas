@@ -87,11 +87,21 @@
     </div>
 
     <script>
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('confirmationMessage').style.display = 'block';
-            this.reset();
-        });
-    </script>
+document.getElementById('bookingForm').addEventListener('submit', function() {
+    const nome = document.getElementById('name').value;
+    const telefone = document.getElementById('phone').value;
+    const data = document.getElementById('date').value.split('-').reverse().join('/');
+    const horario = document.getElementById('time').value;
+    const pessoas = document.getElementById('people').value;
+    const mesa = document.getElementById('table').value;
+
+    const mensagem = `Olá! Gostaria de confirmar minha reserva:\n\nNome: ${nome}\nTelefone: ${telefone}\nData: ${data}\nHorário: ${horario}\nPessoas: ${pessoas}\nMesa: ${mesa}`;
+    const telefoneWhats = "19996294566"; // número do restaurante
+
+    // Abre WhatsApp em nova aba (em paralelo ao envio para o Flask)
+    window.open(`https://wa.me/55${telefoneWhats}?text=${encodeURIComponent(mensagem)}`, '_blank');
+});
+</script>
+
 </body>
 </html>

@@ -24,6 +24,8 @@ def agendar():
     pessoas = request.form.get("people")
     mesa = request.form.get("table")
 
+    print("Recebido:", nome, telefone)  # 👈 debug aqui
+
     try:
         conn = get_db_connection()
         cur = conn.cursor()
