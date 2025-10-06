@@ -4,14 +4,49 @@
     <meta charset="UTF-8">
     <title>Clientes - Dogs.com</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #fafafa; }
-        table { width: 80%; margin: 20px auto; border-collapse: collapse; }
-        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-        th { background: orange; color: white; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #e67e22;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #e67e22;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .no-data {
+            text-align: center;
+            margin-top: 50px;
+            color: #888;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Lista de Clientes e Reservas</h2>
+    <h2>Lista de Clientes e Reservas</h2>
+
+    {% if clientes %}
     <table>
         <thead>
             <tr>
@@ -19,6 +54,10 @@
                 <th>Nome</th>
                 <th>Telefone</th>
                 <th>Reservas</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Pessoas</th>
+                <th>Mesas</th>
             </tr>
         </thead>
         <tbody>
@@ -28,9 +67,17 @@
                 <td>{{ cliente[1] }}</td>
                 <td>{{ cliente[2] }}</td>
                 <td>{{ cliente[3] }}</td>
+                <td>{{ cliente[4] }}</td>
+                <td>{{ cliente[5] }}</td>
+                <td>{{ cliente[6] }}</td>
+                <td>{{ cliente[7] }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p class="no-data">Nenhum cliente cadastrado ainda.</p>
+    {% endif %}
 </body>
 </html>
+
