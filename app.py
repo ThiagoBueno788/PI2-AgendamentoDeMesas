@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Pega a URL do banco do Render
+# URL do banco do Render/Neon
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_db_connection():
@@ -15,7 +15,7 @@ def get_db_connection():
 def index():
     return render_template("index.html")
 
-# Salvar agendamento no banco
+# Rota para salvar reserva
 @app.route("/agendar", methods=["POST"])
 def agendar():
     nome = request.form.get("name")
@@ -25,52 +25,46 @@ def agendar():
     pessoas = request.form.get("people")
     mesas = request.form.get("table")
 
-    print("Recebido:", nome, telefone, data, horario, pessoas, mesas)  # debug
-
     try:
         conn = get_db_connection()
         cur = conn.cursor()
 
         # Verifica se o cliente já existe
-        cur.execute("SELECT id_cliente, reservas FROM cliente WHERE telefone = %s;", (telefone,))
+        cur.execute("SELECT id_cliente FROM cliente WHERE telefone = %s;", (telefone,))
         cliente = cur.fetchone()
 
         if cliente:
-            # Atualiza contagem de reservas
-            id_cliente, reservas = cliente
-            cur.execute("UPDATE cliente SET reservas = %s WHERE id_cliente = %s;", (reservas + 1, id_cliente))
-            # Atualiza também os últimos dados de reserva
-            cur.execute("""
-                UPDATE cliente 
-                SET data = %s, horario = %s, pessoas = %s, mesas = %s 
-                WHERE id_cliente = %s;
-            """, (data, horario, pessoas, mesas, id_cliente))
+            id_cliente = cliente[0]
         else:
             # Insere novo cliente
-            cur.execute("""
-                INSERT INTO cliente (nome, telefone, reservas, data, horario, pessoas, mesas)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
-            """, (nome, telefone, 1, data, horario, pessoas, mesas))
+            cur.execute("INSERT INTO cliente (nome, telefone) VALUES (%s, %s) RETURNING id_cliente;", (nome, telefone))
+            id_cliente = cur.fetchone()[0]
+
+        # Insere a reserva vinculada ao cliente
+        cur.execute("""
+            INSERT INTO reserva (id_cliente, data, horario, pessoas, mesas)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (id_cliente, data, horario, pessoas, mesas))
 
         conn.commit()
         cur.close()
         conn.close()
-
-        # Redireciona de volta para a página inicial
         return redirect(url_for("index"))
     except Exception as e:
-        return f"<h1>Erro ao salvar agendamento:</h1><p>{e}</p>"
+        return f"<h1>Erro ao salvar reserva:</h1><p>{e}</p>"
 
-# Listagem de clientes
+# Rota para listar clientes + reservas
 @app.route("/clientes")
 def listar_clientes():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute("""
-            SELECT id_cliente, nome, telefone, reservas, data, horario, pessoas, mesas
-            FROM cliente
-            ORDER BY id_cliente DESC;
+            SELECT c.id_cliente, c.nome, c.telefone,
+                   r.data, r.horario, r.pessoas, r.mesas
+            FROM cliente c
+            LEFT JOIN reserva r ON c.id_cliente = r.id_cliente
+            ORDER BY r.data DESC NULLS LAST, r.horario DESC NULLS LAST;
         """)
         clientes = cur.fetchall()
         cur.close()
@@ -79,6 +73,5 @@ def listar_clientes():
     except Exception as e:
         return f"<h1>Erro ao buscar clientes:</h1><p>{e}</p>"
 
-# Inicializa o app localmente
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

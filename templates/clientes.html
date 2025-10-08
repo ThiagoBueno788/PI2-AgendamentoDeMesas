@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Clientes - Dogs.com</title>
+    <title>Clientes e Reservas - Dogs.com</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,9 +18,7 @@
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
+            background: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         th, td {
@@ -29,31 +27,29 @@
             text-align: center;
         }
         th {
-            background-color: #e67e22;
+            background: #e67e22;
             color: white;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background: #f2f2f2;
         }
         .no-data {
             text-align: center;
             margin-top: 50px;
-            color: #888;
-            font-size: 18px;
+            color: #999;
         }
     </style>
 </head>
 <body>
-    <h2>Lista de Clientes e Reservas</h2>
+    <h2>Clientes e Reservas</h2>
 
     {% if clientes %}
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <th>ID Cliente</th>
                 <th>Nome</th>
                 <th>Telefone</th>
-                <th>Reservas</th>
                 <th>Data</th>
                 <th>Horário</th>
                 <th>Pessoas</th>
@@ -61,22 +57,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for cliente in clientes %}
+            {% for c in clientes %}
             <tr>
-                <td>{{ cliente[0] }}</td>
-                <td>{{ cliente[1] }}</td>
-                <td>{{ cliente[2] }}</td>
-                <td>{{ cliente[3] }}</td>
-                <td>{{ cliente[4] }}</td>
-                <td>{{ cliente[5] }}</td>
-                <td>{{ cliente[6] }}</td>
-                <td>{{ cliente[7] }}</td>
+                <td>{{ c[0] }}</td>
+                <td>{{ c[1] }}</td>
+                <td>{{ c[2] }}</td>
+                <td>{{ c[3] or '-' }}</td>
+                <td>{{ c[4] or '-' }}</td>
+                <td>{{ c[5] or '-' }}</td>
+                <td>{{ c[6] or '-' }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-        <p class="no-data">Nenhum cliente cadastrado ainda.</p>
+    <p class="no-data">Nenhum cliente ou reserva cadastrada ainda.</p>
     {% endif %}
 </body>
 </html>
