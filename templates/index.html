@@ -7,11 +7,13 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: url("{{ url_for('static', filename='img/fundo.jpg') }}") no-repeat center center fixed;
+            background: url("../static/img/fundo.jpg") no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 0;
             color: #fff;
+            /* Fallback caso a imagem não carregue */
+            background-color: #2c3e50;
         }
         .container {
             background-color: rgba(0, 0, 0, 0.7);
@@ -59,12 +61,140 @@
             margin: 0 auto 20px auto;
             width: 200px;
         }
+        
+        /* ====== Barra de Acessibilidade ====== */
+        .accessibility-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 10px 15px;
+            border-bottom-left-radius: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .accessibility-bar button {
+            background-color: #fff;
+            color: #333;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 40px;
+        }
+        
+        .accessibility-bar button:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        
+        .accessibility-bar button:active {
+            transform: scale(0.95);
+        }
+        
+        .accessibility-bar button.active {
+            background-color: #e67e22;
+            color: white;
+        }
+        
+        .accessibility-bar .separator {
+            width: 1px;
+            height: 30px;
+            background-color: #666;
+            margin: 0 5px;
+        }
+        
+        /* ====== Alto Contraste ====== */
+        .high-contrast {
+            filter: contrast(200%) brightness(120%);
+        }
+        
+        .high-contrast body {
+            background-color: #000 !important;
+            color: #ffff00 !important;
+        }
+        
+        .high-contrast .container {
+            background-color: #000 !important;
+            border: 3px solid #ffff00 !important;
+            color: #ffff00 !important;
+        }
+        
+        .high-contrast input, 
+        .high-contrast select {
+            background-color: #000 !important;
+            color: #ffff00 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        
+        .high-contrast button {
+            background-color: #000 !important;
+            color: #ffff00 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        
+        .high-contrast .confirmation {
+            background-color: #000 !important;
+            color: #ffff00 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        
+        /* ====== Responsividade da Barra ====== */
+        @media (max-width: 768px) {
+            .accessibility-bar {
+                position: fixed;
+                top: auto;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                border-radius: 0;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                justify-content: center;
+                flex-wrap: wrap;
+                padding: 8px;
+            }
+            
+            .accessibility-bar button {
+                font-size: 12px;
+                padding: 6px 8px;
+                min-width: 35px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- ====== Barra de Acessibilidade ====== -->
+    <div class="accessibility-bar" role="toolbar" aria-label="Ferramentas de Acessibilidade">
+        <button id="increase-font" title="Aumentar tamanho da fonte" aria-label="Aumentar fonte">
+            A+
+        </button>
+        <button id="decrease-font" title="Diminuir tamanho da fonte" aria-label="Diminuir fonte">
+            A-
+        </button>
+        <button id="reset-font" title="Resetar tamanho da fonte" aria-label="Resetar fonte">
+            A
+        </button>
+        
+        <div class="separator"></div>
+        
+        <button id="toggle-contrast" title="Alternar alto contraste" aria-label="Alto contraste" aria-pressed="false">
+            🔆
+        </button>
+        <button id="reset-accessibility" title="Resetar todas as configurações" aria-label="Resetar acessibilidade">
+            ↺
+        </button>
+    </div>
+
     <div class="container">
         <!-- Logo -->
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Dogs.com" class="logo">
+        <img src="../static/img/logo.png" alt="Logo Dogs.com" class="logo">
 
         <h2>Agendamento de Mesas</h2>
         <!-- Envia para Flask -->
@@ -106,6 +236,223 @@
     </div>
 
     <script>
+        // ====== Funcionalidades de Acessibilidade ======
+        let currentFontSize = 100; // Percentual base
+        let isHighContrast = false;
+
+        // Aumentar fonte
+        document.getElementById('increase-font').addEventListener('click', function() {
+            if (currentFontSize < 150) {
+                currentFontSize += 10;
+                document.body.style.fontSize = currentFontSize + '%';
+                saveAccessibilitySettings();
+                showAccessibilityFeedback('Fonte aumentada para ' + currentFontSize + '%');
+            } else {
+                showAccessibilityFeedback('Tamanho máximo da fonte atingido');
+            }
+        });
+
+        // Diminuir fonte
+        document.getElementById('decrease-font').addEventListener('click', function() {
+            if (currentFontSize > 80) {
+                currentFontSize -= 10;
+                document.body.style.fontSize = currentFontSize + '%';
+                saveAccessibilitySettings();
+                showAccessibilityFeedback('Fonte diminuída para ' + currentFontSize + '%');
+            } else {
+                showAccessibilityFeedback('Tamanho mínimo da fonte atingido');
+            }
+        });
+
+        // Resetar fonte
+        document.getElementById('reset-font').addEventListener('click', function() {
+            currentFontSize = 100;
+            document.body.style.fontSize = currentFontSize + '%';
+            saveAccessibilitySettings();
+            showAccessibilityFeedback('Fonte resetada para o tamanho padrão');
+        });
+
+        // Alternar contraste
+        document.getElementById('toggle-contrast').addEventListener('click', function() {
+            isHighContrast = !isHighContrast;
+            document.body.classList.toggle('high-contrast', isHighContrast);
+            
+            const button = document.getElementById('toggle-contrast');
+            button.setAttribute('aria-pressed', isHighContrast);
+            button.classList.toggle('active', isHighContrast);
+            button.innerHTML = isHighContrast ? '🔅' : '🔆';
+            
+            saveAccessibilitySettings();
+            showAccessibilityFeedback(isHighContrast ? 'Alto contraste ativado' : 'Alto contraste desativado');
+        });
+
+        // Resetar todas as configurações de acessibilidade
+        document.getElementById('reset-accessibility').addEventListener('click', function() {
+            currentFontSize = 100;
+            isHighContrast = false;
+            
+            document.body.style.fontSize = currentFontSize + '%';
+            document.body.classList.remove('high-contrast');
+            
+            const contrastButton = document.getElementById('toggle-contrast');
+            contrastButton.setAttribute('aria-pressed', false);
+            contrastButton.classList.remove('active');
+            contrastButton.innerHTML = '🔆';
+            
+            saveAccessibilitySettings();
+            showAccessibilityFeedback('Todas as configurações de acessibilidade foram resetadas');
+        });
+
+        // Salvar configurações no localStorage
+        function saveAccessibilitySettings() {
+            const settings = {
+                fontSize: currentFontSize,
+                highContrast: isHighContrast
+            };
+            localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
+        }
+
+        // Carregar configurações salvas
+        function loadAccessibilitySettings() {
+            const settings = localStorage.getItem('accessibilitySettings');
+            if (settings) {
+                const parsed = JSON.parse(settings);
+                currentFontSize = parsed.fontSize || 100;
+                isHighContrast = parsed.highContrast || false;
+                
+                // Aplicar configurações
+                document.body.style.fontSize = currentFontSize + '%';
+                document.body.classList.toggle('high-contrast', isHighContrast);
+                
+                const contrastButton = document.getElementById('toggle-contrast');
+                contrastButton.setAttribute('aria-pressed', isHighContrast);
+                contrastButton.classList.toggle('active', isHighContrast);
+                contrastButton.innerHTML = isHighContrast ? '🔅' : '🔆';
+            }
+        }
+
+        // Mostrar feedback de acessibilidade
+        function showAccessibilityFeedback(message) {
+            // Remove feedback anterior se existir
+            const existingFeedback = document.getElementById('accessibility-feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            // Cria novo feedback
+            const feedback = document.createElement('div');
+            feedback.id = 'accessibility-feedback';
+            feedback.style.cssText = `
+                position: fixed;
+                top: 60px;
+                right: 20px;
+                background-color: #333;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 5px;
+                z-index: 9999;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            feedback.textContent = message;
+            feedback.setAttribute('role', 'status');
+            feedback.setAttribute('aria-live', 'polite');
+            
+            document.body.appendChild(feedback);
+            
+            // Animação de entrada
+            setTimeout(() => {
+                feedback.style.opacity = '1';
+            }, 10);
+            
+            // Remove após 3 segundos
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                setTimeout(() => {
+                    if (feedback.parentNode) {
+                        feedback.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Atalhos de teclado para acessibilidade
+        document.addEventListener('keydown', function(e) {
+            // Alt + = para aumentar fonte
+            if (e.altKey && e.key === '=') {
+                e.preventDefault();
+                document.getElementById('increase-font').click();
+            }
+            // Alt + - para diminuir fonte
+            else if (e.altKey && e.key === '-') {
+                e.preventDefault();
+                document.getElementById('decrease-font').click();
+            }
+            // Alt + 0 para resetar fonte
+            else if (e.altKey && e.key === '0') {
+                e.preventDefault();
+                document.getElementById('reset-font').click();
+            }
+            // Alt + C para alternar contraste
+            else if (e.altKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+                document.getElementById('toggle-contrast').click();
+            }
+            // Alt + R para resetar tudo
+            else if (e.altKey && e.key.toLowerCase() === 'r') {
+                e.preventDefault();
+                document.getElementById('reset-accessibility').click();
+            }
+        });
+
+        // Carregar configurações ao inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAccessibilitySettings();
+            checkImageLoading();
+        });
+
+        // Verificar se as imagens estão carregando corretamente
+        function checkImageLoading() {
+            // Verificar imagem de fundo
+            const testBackgroundImage = new Image();
+            testBackgroundImage.onload = function() {
+                console.log('✅ Imagem de fundo carregada com sucesso');
+            };
+            testBackgroundImage.onerror = function() {
+                console.warn('❌ Erro ao carregar imagem de fundo, usando cor de fallback');
+                document.body.style.backgroundColor = '#2c3e50';
+                document.body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+            };
+            testBackgroundImage.src = '../static/img/fundo.jpg';
+
+            // Verificar logo
+            const logoImg = document.querySelector('.logo');
+            if (logoImg) {
+                logoImg.onerror = function() {
+                    console.warn('❌ Erro ao carregar logo');
+                    this.style.display = 'none';
+                    // Criar texto alternativo para o logo
+                    const logoText = document.createElement('h1');
+                    logoText.textContent = 'DOGS.COM';
+                    logoText.style.cssText = `
+                        text-align: center;
+                        color: #e67e22;
+                        font-size: 2.5em;
+                        margin: 0 auto 20px auto;
+                        font-weight: bold;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+                    `;
+                    this.parentNode.insertBefore(logoText, this);
+                };
+                
+                logoImg.onload = function() {
+                    console.log('✅ Logo carregada com sucesso');
+                };
+            }
+        }
+
+        // ====== Funcionalidade Original do Formulário ======
         // Ao enviar o formulário → Flask grava no banco e abre WhatsApp
         document.getElementById('bookingForm').addEventListener('submit', function() {
             const nome = document.getElementById('name').value;
